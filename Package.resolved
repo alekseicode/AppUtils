@@ -3,7 +3,7 @@
     {
       "identity" : "appextensions",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pffan91/AppExtensions.git",
+      "location" : "https://github.com/alekseicode/AppExtensions.git",
       "state" : {
         "branch" : "main",
         "revision" : "52f7313030dcc86d651d2075c23c3359a9a2f5d8"

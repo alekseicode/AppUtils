@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/realm/realm-swift.git", from: "20.0.0"),
-        .package(url: "https://github.com/pffan91/AppExtensions.git", branch: "main")
+        .package(url: "https://github.com/alekseicode/AppExtensions.git", branch: "main")
     ],
     targets: [
         .target(

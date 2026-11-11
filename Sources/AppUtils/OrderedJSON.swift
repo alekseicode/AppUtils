@@ -44,9 +44,20 @@ public enum OrderedJSON {
     }
 
     /// Only a whole number in `Int` range: `200.5` is not read as 200, and `1e30` is not clamped to `Int.max`.
-    /// The range is checked through `Double`, so the last few hundred values below `Int.max` read as `nil`.
     public var int: Int? {
-        guard case .number(let value) = self, Int(exactly: value.doubleValue) != nil else { return nil }
+        guard case .number(let value) = self else { return nil }
+        // A double is judged by itself: its `decimalValue` is rounded to about 16 digits, so
+        // `1.9999999999999998` would look whole. `NSDecimalNumber` reports "d" too, hence the first check.
+        if !(value is NSDecimalNumber), ["f", "d"].contains(String(cString: value.objCType)) {
+            return Int(exactly: value.doubleValue)
+        }
+        // Integers and `NSDecimalNumber` (what `JSONSerialization` returns past 64 bits) are exact as
+        // `Decimal`; `intValue` alone is unreliable out of range.
+        var decimal = value.decimalValue
+        guard !decimal.isNaN, decimal >= Decimal(Int.min), decimal <= Decimal(Int.max) else { return nil }
+        var whole = Decimal()
+        NSDecimalRound(&whole, &decimal, 0, .plain)
+        guard whole == decimal else { return nil }
         return value.intValue
     }
 }

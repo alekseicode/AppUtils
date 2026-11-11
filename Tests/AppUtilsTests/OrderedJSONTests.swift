@@ -49,8 +49,20 @@ final class OrderedJSONTests: XCTestCase {
         XCTAssertNil(try parse("200.5").int)
         XCTAssertNil(try parse("1e30").int)
         XCTAssertNil(try parse("-1e30").int)
+        XCTAssertNil(try parse("1.9999999999999998").int)
+        XCTAssertNil(try parse("200.00000000000003").int)
         XCTAssertNil(try parse(#""200""#).int)
         XCTAssertNil(try parse("true").int)
+    }
+
+    func testIntKeepsTheExactBoundsOfInt() throws {
+        XCTAssertEqual(try parse(String(Int.max)).int, Int.max)
+        XCTAssertEqual(try parse(String(Int.min)).int, Int.min)
+        XCTAssertNil(try parse("9223372036854775808").int)
+        XCTAssertNil(try parse("-9223372036854775809").int)
+        XCTAssertNil(OrderedJSON.number(NSDecimalNumber(string: "-9223372036854775809")).int)
+        XCTAssertNil(OrderedJSON.number(NSNumber(value: -Double.infinity)).int)
+        XCTAssertNil(OrderedJSON.number(NSNumber(value: UInt64.max)).int)
     }
 
     func testSubscriptTakesTheFirstMemberAndIgnoresNonObjects() throws {
